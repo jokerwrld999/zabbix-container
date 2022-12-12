@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # >>>>> Get Container Info
-compose_file="docker-compose.yaml"
+compose_file="docker-compose-server.yaml"
 container_name=$(cat $compose_file | grep container_name | awk -e '{print $2}')
 host_port=$(cat $compose_file | grep -A4 -i ports | head -n2 | awk -e '{print $2}' | awk -F ':' '{print $1}')
 container_volumes=$(cat $compose_file | grep -A4 -i volumes | tail -n1 | awk -F ':' '{print $1}')
