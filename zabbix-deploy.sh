@@ -13,6 +13,18 @@ init_password_location="$mountpoint_on_host/secrets/initialAdminPassword"
 init_password=$(sudo cat $init_password_location 2>/dev/null)
 container_status=$(docker inspect $container_name | grep Running | awk -F ":" '{print $2}' | sed 's/,.*//')
 
+check_pkg_manager() {
+    if [ -x "$(command -v apt)" ]
+    then 
+        sudo apt install -y $packagesNeeded
+    elif [ -x "$(command -v dnf)" ]
+    then 
+        sudo dnf install $packagesNeeded
+    else 
+        echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $packagesNeeded">&2; 
+    fi
+}
+
 if [ -x "$(command -v apt)" ]
 then
     echo -ne "
@@ -80,14 +92,3 @@ docker-compose -f ./$compose_file up -d
 
 docker ps
 
-check_pkg_manager(){
-    if [ -x "$(command -v apt)" ]
-    then 
-        sudo apt install -y $packagesNeeded
-    elif [ -x "$(command -v dnf)" ]
-    then 
-        sudo dnf install $packagesNeeded
-    else 
-        echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $packagesNeeded">&2; 
-    fi
-}
