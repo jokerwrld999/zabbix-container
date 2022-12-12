@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# >>>>> Get Database Variables
+while :
+do
+    read -p "Choose A Installation Type Of Zabbix: server Or proxy: " setup_type
+    if [ $setup_type = "server" ]
+    then
+        read -p "Enter Database User" POSTGRES_USER
+        read -p "Enter Database Password" POSTGRES_PASSWORD
+        read -p "Enter Database Name" POSTGRES_DB
+        break
+    elif [ $setup_type = "proxy" ]
+        echo "OK!"
+        break
+    else
+        echo "Please Enter A Valid Installation Type Of Zabbix"  
+    fi
+done
+
+
+
 # >>>>> Get Container Info
 compose_file="docker-compose-server.yaml"
 container_name=$(cat $compose_file | grep container_name | awk -e '{print $2}')

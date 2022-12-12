@@ -2,6 +2,7 @@ version: "3.5"
 services:
    server:
       image: zabbix/zabbix-server-pgsql:alpine-latest
+      container_name: server
       ports:
          - "10051:10051"
       volumes:
@@ -19,16 +20,17 @@ services:
       depends_on:
          - postgres-server
       environment:
-         - POSTGRES_USER=zabbix
-         - POSTGRES_PASSWORD=zabbix
-         - POSTGRES_DB=zabbixNew
+         - ${POSTGRES_USER}
+         - ${POSTGRES_PASSWORD}
+         - ${POSTGRES_DB}
          - ZBX_HISTORYSTORAGETYPES=log,text #Zabbix configuration variables
          - ZBX_DEBUGLEVEL=1
          - ZBX_HOUSEKEEPINGFREQUENCY=1
          - ZBX_MAXHOUSEKEEPERDELETE=5000
-         - ZBX_PROXYCONFIGFREQUENCY=3600
+         - ZBX_PROXYCONFIGFREQUENCY=60
    web-nginx-pgsql:
       image: zabbix/zabbix-web-nginx-pgsql:alpine-latest
+      container_name: web-nginx-pgsql
       ports:
          - "80:8080"
          - "443:8443"
@@ -48,15 +50,16 @@ services:
          - server
          - postgres-server
       environment:
-         - POSTGRES_USER=zabbix
-         - POSTGRES_PASSWORD=zabbix
-         - POSTGRES_DB=zabbixNew
+         - ${POSTGRES_USER
+         - ${POSTGRES_PASSWORD}
+         - ${POSTGRES_DB}
          - ZBX_SERVER_HOST=server
          - ZBX_POSTMAXSIZE=64M
-         - PHP_TZ=Europe/Moscow
+         - PHP_TZ=Europe/Kiev
          - ZBX_MAXEXECUTIONTIME=500
    agent:
       image: zabbix/zabbix-agent:alpine-latest
+      container_name: agent
       ports:
          - "10050:10050"
       volumes:
@@ -75,6 +78,7 @@ services:
          - ZBX_SERVER_HOST=server
    snmptraps:
       image: zabbix/zabbix-snmptraps:alpine-latest
+      container_name: snmptraps
       ports:
          - "162:1162/udp"
       volumes:
@@ -86,13 +90,14 @@ services:
          - ZBX_SERVER_HOST=server
    postgres-server:
       image: postgres:latest
+      container_name: postgres-server
       restart: always
       volumes:
          - /var/lib/postgresql/data:/var/lib/postgresql/data
       environment:
-         - POSTGRES_PASSWORD=zabbix
-         - POSTGRES_USER=zabbix
-         - POSTGRES_DB=zabbixNew
+         - ${POSTGRES_USER}
+         - ${POSTGRES_PASSWORD}
+         - ${POSTGRES_DB}
       healthcheck:
          test: ["CMD-SHELL", "pg_isready"]
          interval: 10s
