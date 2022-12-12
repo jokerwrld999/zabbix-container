@@ -67,7 +67,7 @@ else
                      Installing Docker-Compose Package....
     -------------------------------------------------------------------------
     "
-    $packagesNeeded='docker-compose'
+    packagesNeeded='docker-compose'
     check_pkg_manager
 fi
 
