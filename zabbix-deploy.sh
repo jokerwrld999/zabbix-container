@@ -78,29 +78,7 @@ echo -ne "
 "
 docker-compose -f ./$compose_file up -d
 
-if $(sudo test -f "$init_password_location")
-then
-    echo -ne "
-    -------------------------------------------------------------------------
-                    Setup Was Done Correctly! You Good To Go!
-                    Initial Password: $init_password
-                    Service Running On Port: $host_port
-    -------------------------------------------------------------------------
-    "
-elif [ $container_status = "true" ]
-then
-    echo -ne "
-    -------------------------------------------------------------------------
-                    Service Running On Port: $host_port
-    -------------------------------------------------------------------------
-    "
-else
-    echo -ne "
-    -------------------------------------------------------------------------
-                    Something Went Wrong!
-    -------------------------------------------------------------------------
-    "
-fi
+docker ps
 
 check_pkg_manager(){
     if [ -x "$(command -v apt)" ]
