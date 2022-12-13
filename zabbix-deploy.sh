@@ -6,14 +6,16 @@ success_message="OK!"
 # **** Get Database Variables
 while :
 do
-    read -p "Choose A Installation Type Of Zabbix: server Or proxy: " setup_type
+    read -p "Choose A Installation Type Of Zabbix: server Or proxy [server]: " setup_type
+    setup_type=${setup_type:-server}
     if [ $setup_type = "server" ]
     then
-        read -p "Enter Database User: " POSTGRES_USER
+        read -p "Enter Database User [zabbix]: " POSTGRES_USER
         POSTGRES_USER=${POSTGRES_USER:-zabbix}
-        read -p "Enter Database Password: " POSTGRES_PASSWORD
+        echo $POSTGRES_USER
+        read -p "Enter Database Password [zabbix]: " POSTGRES_PASSWORD
         POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-zabbix}
-        read -p "Enter Database Name: " POSTGRES_DB
+        read -p "Enter Database Name [zabbixDB]: " POSTGRES_DB
         POSTGRES_DB=${POSTGRES_DB:-zabbixDB}
         break
     elif [ $setup_type = "proxy" ]
@@ -26,7 +28,6 @@ do
 done
 
 # **** Set Database Variables
-if [  ]
 sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
 sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
 sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
@@ -134,4 +135,3 @@ compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
 echo $run
 docker ps
-
