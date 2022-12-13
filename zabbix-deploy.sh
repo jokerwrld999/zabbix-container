@@ -9,9 +9,9 @@ do
     read -p "Choose A Installation Type Of Zabbix: server Or proxy: " setup_type
     if [ $setup_type = "server" ]
     then
-        read -p "Enter Database User" POSTGRES_USER
-        read -p "Enter Database Password" POSTGRES_PASSWORD
-        read -p "Enter Database Name" POSTGRES_DB
+        read -p "Enter Database User: " POSTGRES_USER
+        read -p "Enter Database Password: " POSTGRES_PASSWORD
+        read -p "Enter Database Name: " POSTGRES_DB
         break
     elif [ $setup_type = "proxy" ]
     then
@@ -125,9 +125,9 @@ echo -ne "
                     Starting Zabbix Service....
 -------------------------------------------------------------------------
 "
-$1="up -d"
+run=${1:-"up -d"}
 compose_file="docker-compose-$setup_type.yaml"
-docker-compose -f ./$compose_file $1
+docker-compose -f ./$compose_file run
 echo $1
 docker ps
 
