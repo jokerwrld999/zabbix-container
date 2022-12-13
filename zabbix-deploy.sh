@@ -130,15 +130,20 @@ echo -ne "
 run=${1:-"up -d"}
 compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
+
+# *** Container Status Check
+sleep 10
 container_status=$(docker inspect web-nginx-pgsql | grep "Status" | awk -F ":" '{print $2}' | sed 's/,.*//')
-echo $container_status
-if [$container_status = "unhealthy"]
+if [ $container_status = "unhealthy" ]
 then
 echo -ne "
     -------------------------------------------------------------------------
                     Something Went Wrong!
     -------------------------------------------------------------------------
     "
+elif [ $container_status = "unhealthy" ]
+then
+    echo ddd
 else
     echo -ne "
     -------------------------------------------------------------------------
