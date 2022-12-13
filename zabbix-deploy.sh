@@ -10,8 +10,11 @@ do
     if [ $setup_type = "server" ]
     then
         read -p "Enter Database User: " POSTGRES_USER
+        POSTGRES_USER=${POSTGRES_USER:-zabbix}
         read -p "Enter Database Password: " POSTGRES_PASSWORD
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-zabbix}
         read -p "Enter Database Name: " POSTGRES_DB
+        POSTGRES_DB=${POSTGRES_DB:-zabbixDB}
         break
     elif [ $setup_type = "proxy" ]
     then
@@ -23,6 +26,7 @@ do
 done
 
 # **** Set Database Variables
+if [  ]
 sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
 sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
 sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
@@ -127,7 +131,7 @@ echo -ne "
 "
 run=${1:-"up -d"}
 compose_file="docker-compose-$setup_type.yaml"
-docker-compose -f ./$compose_file run
-echo $1
+docker-compose -f ./$compose_file $run
+echo $run
 docker ps
 
