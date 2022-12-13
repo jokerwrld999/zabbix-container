@@ -32,9 +32,6 @@ sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
 sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
 sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
 
-# **** Get Host Info
-container_status=$(docker inspect $container_name | grep Running | awk -F ":" '{print $2}' | sed 's/,.*//')
-
 # **** Cross-Distro Packages Installation
 check_pkg_manager() {
     if [ -x "$(command -v apt)" ]
@@ -133,5 +130,26 @@ echo -ne "
 run=${1:-"up -d"}
 compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
-echo $run
-docker ps
+if $(sudo test -f "$init_password_location")
+then
+    echo -ne "
+    -------------------------------------------------------------------------
+                    Setup Was Done Correctly! You Good To Go!
+                    Initial Password: $init_password
+                    Service Running On Port: $host_port
+    -------------------------------------------------------------------------
+    "
+elif [ $container_status = "true" ]
+then
+    echo -ne "
+    -------------------------------------------------------------------------
+                    Service Running On Port: $host_port
+    -------------------------------------------------------------------------
+    "
+else
+    echo -ne "
+    -------------------------------------------------------------------------
+                    Something Went Wrong!
+    -------------------------------------------------------------------------
+    "
+fi
