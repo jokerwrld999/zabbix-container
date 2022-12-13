@@ -133,12 +133,12 @@ docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
 container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
-while [[ echo "$container_name" == "starting" ]]
+while [[ $($container_name) == "starting" ]]
 do
     sleep 3
     echo $container_status
 done
-if [[ echo $container_status == "healthy" ]]
+if [[ $($container_status) == "healthy" ]]
 then
     echo -ne "
     -------------------------------------------------------------------------
