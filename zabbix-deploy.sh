@@ -132,26 +132,25 @@ compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
-sleep 10
-container_status=$(docker inspect web-nginx-pgsql | grep "Status" | awk -F ":" '{print $2}' | sed 's/,.*//')
-if [ $container_status = "unhealthy" ]
+container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
+while [ $container_name = "starting" ]
+do
+    sleep 3
+    echo $container_status
+done
+if [ $container_status = "healthy" ]
 then
-echo -ne "
-    -------------------------------------------------------------------------
-                    Something Went Wrong!
-    -------------------------------------------------------------------------
-    "
-elif [ $container_status = "unhealthy" ]
-then
-    echo ddd
-else
     echo -ne "
     -------------------------------------------------------------------------
                     Setup Was Done Correctly! You Good To Go!
-                    Database Password: $init_password
+                    Database Password: $POSTGRES_PASSWORD
                     Service Running On Port: 80 And 443
     -------------------------------------------------------------------------
     "
 else
-    
+    echo -ne "
+    -------------------------------------------------------------------------
+                    Something Went Wrong!
+    -------------------------------------------------------------------------
+    "
 fi
