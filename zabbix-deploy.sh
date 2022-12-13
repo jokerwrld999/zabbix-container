@@ -19,15 +19,13 @@ do
     fi
 done
 
-
 # **** Set Database Variables
 sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
 sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
 sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
 
 # **** Get Container Info
-compose_file="docker-compose-$setup_type.yaml"
-echo $compose_file
+
 host_port=$(cat $compose_file | grep -A4 -i ports | head -n2 | awk -e '{print $2}' | awk -F ':' '{print $1}')
 
 
@@ -40,7 +38,7 @@ check_pkg_manager() {
         sudo apt install -y $packagesNeeded
     elif [ -x "$(command -v dnf)" ]
     then 
-        sudo dnf install $packagesNeeded
+        sudo dnf install -y $packagesNeeded
     else 
         echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $packagesNeeded">&2; 
     fi
@@ -62,7 +60,7 @@ then
 # *** Modify UFW Rules
     ufw-docker install
 # *** Expose Ports Of The Container
-    ufw-docker allow $container_name
+    ufw-docker allow web-nginx-pgsql
 else
     echo "OK!"
 fi
@@ -106,9 +104,10 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Starting $container_name Container....
+                    Starting Zabbix Service....
 -------------------------------------------------------------------------
 "
+compose_file="docker-compose-$setup_type.yaml"
 #docker-compose -f ./$compose_file up -d
 
 docker ps
