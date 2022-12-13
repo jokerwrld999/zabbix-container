@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # **** Messages Variables
-$success_message="OK!"
+success_message="OK!"
 
 # **** Get Database Variables
 while :
