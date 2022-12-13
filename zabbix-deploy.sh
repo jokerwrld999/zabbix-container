@@ -21,9 +21,9 @@ done
 
 
 # **** Set Database Variables
-sudo sed -i "s/POSTGRES_USER=.*/$POSTGRES_USER/g" ./variables.env
-sudo sed -i "s/POSTGRES_PASSWORD=.*/$POSTGRES_PASSWORD/g" ./variables.env
-sudo sed -i "s/POSTGRES_DB=.*/$POSTGRES_DB/g" ./variables.env
+sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
+sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
+sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
 
 # **** Get Container Info
 compose_file="docker-compose-$setup_type.yaml"
