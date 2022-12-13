@@ -20,7 +20,7 @@ do
         break
     elif [[ $setup_type == "proxy" ]]
     then
-        $success_message
+        echo $success_message
         break
     else
         echo "Please Enter A Valid Installation Type Of Zabbix"  
@@ -64,7 +64,7 @@ then
     # *** Expose Ports Of The Container
     ufw-docker allow web-nginx-pgsql
 else
-    $success_message
+    echo $success_message
 fi
 
 # **** Docker Setup
@@ -75,7 +75,7 @@ echo -ne "
 "
 if [[ -x "$(command -v docker)" ]]
 then
-    $success_message
+    echo $success_message
 else
     echo -ne "
     -------------------------------------------------------------------------
@@ -85,7 +85,7 @@ else
     # *** Curl Install
     if [[ -x "$(command -v curl)" ]]
     then
-        $success_message
+        echo $success_message
     else
         packagesNeeded='curl'
         check_pkg_manager
@@ -97,7 +97,7 @@ else
     then
         sudo usermod -aG docker $USER
     else
-        $success_message
+        echo $success_message
     fi
 fi
 
@@ -109,7 +109,7 @@ echo -ne "
 "
 if [[ -x "$(command -v docker-compose)" ]]
 then
-    $success_message
+    echo $success_message
 else
     echo -ne "
     -------------------------------------------------------------------------
@@ -133,12 +133,12 @@ docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
 container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
-while [[ $container_name == "starting" ]]
+while [[ echo $container_name == "starting" ]]
 do
     sleep 3
     echo $container_status
 done
-if [[ $container_status == "healthy" ]]
+if [[ echo $container_status == "healthy" ]]
 then
     echo -ne "
     -------------------------------------------------------------------------
