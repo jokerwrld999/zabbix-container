@@ -132,13 +132,13 @@ compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
-container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
-while [[ -x "$($container_status)" == "starting" ]]
+container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//' | cut -d '"' -f2)
+while [[ $(echo $container_status) == "starting" ]]
 do
-    sleep 3
-    echo $container_status
+    echo "sleep"
+    sleep 10     
 done
-if [[ $($container_status) == "healthy" ]]
+if [[ $(echo $container_status) == "healthy" ]]
 then
     echo -ne "
     -------------------------------------------------------------------------
@@ -147,10 +147,19 @@ then
                     Service Running On Port: 80 And 443
     -------------------------------------------------------------------------
     "
+elif [[ $(echo $container_status) == "unhealthy" ]]
+then
+    echo -ne "
+    -------------------------------------------------------------------------
+                    UNHEALTHY!
+    -------------------------------------------------------------------------
+    "
+       
 else
     echo -ne "
     -------------------------------------------------------------------------
                     Something Went Wrong!
     -------------------------------------------------------------------------
     "
+        
 fi
