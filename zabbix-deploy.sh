@@ -11,6 +11,7 @@ do
         read -p "Enter Database Name" POSTGRES_DB
         break
     elif [ $setup_type = "proxy" ]
+    then
         echo "OK!"
         break
     else
