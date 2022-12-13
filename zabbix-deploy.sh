@@ -8,7 +8,7 @@ while :
 do
     read -p "Choose A Installation Type Of Zabbix: server Or proxy [server]: " setup_type
     setup_type=${setup_type:-server}
-    if [ $setup_type = "server" ]
+    if [[ $setup_type == "server" ]]
     then
         read -p "Enter Database User [zabbix]: " POSTGRES_USER
         POSTGRES_USER=${POSTGRES_USER:-zabbix}
@@ -18,7 +18,7 @@ do
         read -p "Enter Database Name [zabbixDB]: " POSTGRES_DB
         POSTGRES_DB=${POSTGRES_DB:-zabbixDB}
         break
-    elif [ $setup_type = "proxy" ]
+    elif [[ $setup_type == "proxy" ]]
     then
         $success_message
         break
@@ -34,10 +34,10 @@ sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
 
 # **** Cross-Distro Packages Installation
 check_pkg_manager() {
-    if [ -x "$(command -v apt)" ]
+    if [[ -x "$(command -v apt)" ]]
     then 
         sudo apt install -y $packagesNeeded
-    elif [ -x "$(command -v dnf)" ]
+    elif [[ -x "$(command -v dnf)" ]]
     then 
         sudo dnf install -y $packagesNeeded
     else 
@@ -46,7 +46,7 @@ check_pkg_manager() {
 }
 
 # **** Docker Anf UFW Setup
-if [ -x "$(command -v apt)" ]
+if [[ -x "$(command -v apt)" ]]
 then
     echo -ne "
     -------------------------------------------------------------------------
@@ -73,7 +73,7 @@ echo -ne "
                      Checking For Docker Package....
 -------------------------------------------------------------------------
 "
-if [ -x "$(command -v docker)" ]
+if [[ -x "$(command -v docker)" ]]
 then
     $success_message
 else
@@ -83,7 +83,7 @@ else
     -------------------------------------------------------------------------
     "
     # *** Curl Install
-    if [ -x "$(command -v curl)" ]
+    if [[ -x "$(command -v curl)" ]]
     then
         $success_message
     else
@@ -93,7 +93,7 @@ else
     curl -fsSL https://get.docker.com -o get-docker.sh
     # *** Docker Setup
     sudo sh ./get-docker.sh
-    if [ whoami !=root ]
+    if [[ whoami !== root ]]
     then
         sudo usermod -aG docker $USER
     else
@@ -107,7 +107,7 @@ echo -ne "
                      Checking For Docker-Compose Package....
 -------------------------------------------------------------------------
 "
-if [ -x "$(command -v docker-compose)" ]
+if [[ -x "$(command -v docker-compose)" ]]
 then
     $success_message
 else
@@ -133,12 +133,12 @@ docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
 container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
-while [ $container_name = "starting" ]
+while [[ $container_name == "starting" ]]
 do
     sleep 3
     echo $container_status
 done
-if [ $container_status = "healthy" ]
+if [[ $container_status == "healthy" ]]
 then
     echo -ne "
     -------------------------------------------------------------------------
