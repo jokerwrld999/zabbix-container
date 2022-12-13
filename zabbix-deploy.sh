@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# >>>>> Get Database Variables
+# **** Get Database Variables
 while :
 do
     read -p "Choose A Installation Type Of Zabbix: server Or proxy: " setup_type
@@ -20,14 +20,18 @@ do
 done
 
 
+# **** Set Database Variables
+sudo sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=$POSTGRES_USER/" ./variables.env
+sudo sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/" ./variables.env
+sudo sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=$POSTGRES_DB/" ./variables.env
 
-# >>>>> Get Container Info
+# **** Get Container Info
 compose_file="docker-compose-$setup_type.yaml"
 echo $compose_file
 host_port=$(cat $compose_file | grep -A4 -i ports | head -n2 | awk -e '{print $2}' | awk -F ':' '{print $1}')
 
 
-# >>>>> Get Host Info
+# **** Get Host Info
 container_status=$(docker inspect $container_name | grep Running | awk -F ":" '{print $2}' | sed 's/,.*//')
 
 check_pkg_manager() {
