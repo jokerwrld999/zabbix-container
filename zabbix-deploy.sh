@@ -130,26 +130,23 @@ echo -ne "
 run=${1:-"up -d"}
 compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
-if $(sudo test -f "$init_password_location")
+container_status=$(docker inspect web-nginx-pgsql | grep "Status" | awk -F ":" '{print $2}' | sed 's/,.*//')
+echo $container_status
+if [$container_status = "unhealthy"]
 then
-    echo -ne "
+echo -ne "
     -------------------------------------------------------------------------
-                    Setup Was Done Correctly! You Good To Go!
-                    Initial Password: $init_password
-                    Service Running On Port: $host_port
-    -------------------------------------------------------------------------
-    "
-elif [ $container_status = "true" ]
-then
-    echo -ne "
-    -------------------------------------------------------------------------
-                    Service Running On Port: $host_port
+                    Something Went Wrong!
     -------------------------------------------------------------------------
     "
 else
     echo -ne "
     -------------------------------------------------------------------------
-                    Something Went Wrong!
+                    Setup Was Done Correctly! You Good To Go!
+                    Database Password: $init_password
+                    Service Running On Port: 80 And 443
     -------------------------------------------------------------------------
     "
+else
+    
 fi
