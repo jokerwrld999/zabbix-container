@@ -93,7 +93,7 @@ else
     curl -fsSL https://get.docker.com -o get-docker.sh
     # *** Docker Setup
     sudo sh ./get-docker.sh
-    if [[ whoami !== root ]]
+    if [[ whoami != root ]]
     then
         sudo usermod -aG docker $USER
     else
@@ -133,7 +133,7 @@ docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
 container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//')
-while [[ echo $container_name == "starting" ]]
+while [[ echo "$container_name" == "starting" ]]
 do
     sleep 3
     echo $container_status
