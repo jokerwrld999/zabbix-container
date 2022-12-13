@@ -22,16 +22,12 @@ done
 
 
 # >>>>> Get Container Info
-compose_file="docker-compose-server.yaml"
-container_name=$(cat $compose_file | grep container_name | awk -e '{print $2}')
+compose_file="docker-compose-$setup_type.yaml"
+echo $compose_file
 host_port=$(cat $compose_file | grep -A4 -i ports | head -n2 | awk -e '{print $2}' | awk -F ':' '{print $1}')
-container_volumes=$(cat $compose_file | grep -A4 -i volumes | tail -n1 | awk -F ':' '{print $1}')
+
 
 # >>>>> Get Host Info
-host_volume=$(docker volume ls | grep $container_volumes | awk -F ' ' '{print $2}' )
-mountpoint_on_host=$(docker inspect $host_volume | grep Mountpoint | awk -F ':' '{print $2}' | cut -d '"' -f2)
-init_password_location="$mountpoint_on_host/secrets/initialAdminPassword"
-init_password=$(sudo cat $init_password_location 2>/dev/null)
 container_status=$(docker inspect $container_name | grep Running | awk -F ":" '{print $2}' | sed 's/,.*//')
 
 check_pkg_manager() {
@@ -109,7 +105,7 @@ echo -ne "
                     Starting $container_name Container....
 -------------------------------------------------------------------------
 "
-docker-compose -f ./$compose_file up -d
+#docker-compose -f ./$compose_file up -d
 
 docker ps
 
