@@ -132,34 +132,32 @@ compose_file="docker-compose-$setup_type.yaml"
 docker-compose -f ./$compose_file $run
 
 # *** Container Status Check
-container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//' | cut -d '"' -f2)
-while [[ $(echo $container_status) == "starting" ]]
+while :
 do
-    echo "sleep"
-    sleep 10     
-done
-if [[ $(echo $container_status) == "healthy" ]]
-then
-    echo -ne "
-    -------------------------------------------------------------------------
+    container_status=$(docker inspect web-nginx-pgsql | grep "Status" | tail -n1 | awk -F ":" '{print $2}' | sed 's/,.*//' | cut -d '"' -f2)
+
+    echo "$container_status"
+        sleep 10 
+    if [[ $(echo $container_status) == "healthy" ]]
+    then
+        echo -ne "
+        -------------------------------------------------------------------------
                     Setup Was Done Correctly! You Good To Go!
                     Database Password: $POSTGRES_PASSWORD
                     Service Running On Port: 80 And 443
-    -------------------------------------------------------------------------
-    "
-elif [[ $(echo $container_status) == "unhealthy" ]]
-then
-    echo -ne "
-    -------------------------------------------------------------------------
+        -------------------------------------------------------------------------
+        "
+        break
+    elif [[ $(echo $container_status) == "unhealthy" ]]
+    then
+        echo -ne "
+        -------------------------------------------------------------------------
                     UNHEALTHY!
-    -------------------------------------------------------------------------
-    "
-       
-else
-    echo -ne "
-    -------------------------------------------------------------------------
-                    Something Went Wrong!
-    -------------------------------------------------------------------------
-    "
+        -------------------------------------------------------------------------
+        "
+        break
+    else
+        echo "else"
+    fi
         
-fi
+done
